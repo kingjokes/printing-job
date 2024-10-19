@@ -114,7 +114,19 @@ Application fully deployed to server
 - http://localhost:5173/ :-> loads the application customer page
 - http://localhost:5173/admin :-> loads the admin page
 
+For local deployment change the base url  in this file  ./frontend/utils/apiRequest.js
+
+ from:
+```js
+export const baseURL = `https://printing-job-backend.onrender.com/print-job/`;
+```
+
+To:
+```js
+export const baseURL = `http://localhost:4000/print-job/`;
+```
+
 ### Production deployment
 
 - https://printing-job-frontend.onrender.com/ :-> loads the application customer page
-- https://printing-job-frontend.onrender.com/admin :-> loads the admin page
+- https://printing-job-frontend.onrender.com/admin/ :-> loads the admin page
