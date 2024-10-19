@@ -10,27 +10,27 @@ import {
   UploadedFile,
   HttpException,
   HttpStatus,
-} from '@nestjs/common';
-import { PrintJobService } from './print-job.service';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { QuoteRequestDto } from './dto/quote-request.dto';
-import { PaymentRequestDto } from './dto/payment-request.dto';
-import { diskStorage } from 'multer';
-import { existsSync, mkdirSync } from 'fs';
-import { extname } from 'path';
-import { CreatePriceDto } from './dto/create-price.dto';
+} from "@nestjs/common";
+import { PrintJobService } from "./print-job.service";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { QuoteRequestDto } from "./dto/quote-request.dto";
+import { PaymentRequestDto } from "./dto/payment-request.dto";
+import { diskStorage } from "multer";
+import { existsSync, mkdirSync } from "fs";
+import { extname } from "path";
+import { CreatePriceDto } from "./dto/create-price.dto";
 
-@Controller('print-job')
+@Controller("print-job")
 export class PrintJobController {
   constructor(private readonly printJobService: PrintJobService) {}
 
-  @Post('upload-file')
+  @Post("upload-file")
   @UseInterceptors(
-    FileInterceptor('file', {
+    FileInterceptor("file", {
       storage: diskStorage({
         // Specify where to save the file
         destination: (req: any, file: any, cb: any) => {
-          const uploadPath = './uploads/';
+          const uploadPath = "./uploads/";
           // Create folder if doesn't exist
           if (!existsSync(uploadPath)) {
             mkdirSync(uploadPath), { recursive: true };
@@ -45,8 +45,8 @@ export class PrintJobController {
       }),
       fileFilter: (req: any, file: any, cb: any) => {
         if (
-          extname(file.originalname) === '.pdf' ||
-          extname(file.originalname) === '.docx'
+          extname(file.originalname) === ".pdf" ||
+          extname(file.originalname) === ".docx"
         ) {
           // Allow storage of file
           cb(null, true);
@@ -55,13 +55,13 @@ export class PrintJobController {
           cb(
             new HttpException(
               `Unsupported file type ${extname(file.originalname)}, only .wav is allowed`,
-              HttpStatus.BAD_REQUEST,
+              HttpStatus.BAD_REQUEST
             ),
-            false,
+            false
           );
         }
       },
-    }),
+    })
   )
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     try {
@@ -71,7 +71,7 @@ export class PrintJobController {
     }
   }
 
-  @Post('print-quote')
+  @Post("print-quote")
   async getQuote(@Body() quoteData: QuoteRequestDto) {
     try {
       return await this.printJobService.calculateQuote(quoteData);
@@ -80,7 +80,7 @@ export class PrintJobController {
     }
   }
 
-  @Post('payment')
+  @Post("payment")
   async processPayment(@Body() paymentData: PaymentRequestDto) {
     try {
       return await this.printJobService.processPayment(paymentData);
@@ -89,7 +89,7 @@ export class PrintJobController {
     }
   }
 
-  @Post('pricing')
+  @Post("pricing")
   async updatePricing(@Body() body: CreatePriceDto) {
     try {
       return await this.printJobService.updatePrice(body);
@@ -98,7 +98,7 @@ export class PrintJobController {
     }
   }
 
-  @Get('pricing')
+  @Get("pricing")
   async fetchPricing() {
     try {
       return await this.printJobService.fetchPricing();
@@ -107,7 +107,7 @@ export class PrintJobController {
     }
   }
 
-  @Get('jobs')
+  @Get("jobs")
   async fetchJobs() {
     try {
       return await this.printJobService.fetchJobs();

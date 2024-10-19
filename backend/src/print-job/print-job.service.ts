@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { promises as fs } from 'fs';
-import * as pdf from 'pdf-parse';
-import * as mammoth from 'mammoth';
-import * as sharp from 'sharp';
-import * as ColorThief from 'colorthief';
-import { QuoteRequestDto } from './dto/quote-request.dto';
-import { PaymentRequestDto } from './dto/payment-request.dto';
-import { PrismaService } from 'src/prisma.service';
-import { CreatePriceDto } from './dto/create-price.dto';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { Injectable } from "@nestjs/common";
+import { promises as fs } from "fs";
+import * as pdf from "pdf-parse";
+import * as mammoth from "mammoth";
+import * as sharp from "sharp";
+import * as ColorThief from "colorthief";
+import { QuoteRequestDto } from "./dto/quote-request.dto";
+import { PaymentRequestDto } from "./dto/payment-request.dto";
+import { PrismaService } from "src/prisma.service";
+import { CreatePriceDto } from "./dto/create-price.dto";
+import { CloudinaryService } from "src/cloudinary/cloudinary.service";
 
 interface PageInfo {
   isColored: boolean;
@@ -26,18 +26,18 @@ interface ImageInfo {
 export class PrintJobService {
   constructor(
     private readonly prismaService: PrismaService,
-    private cloudinary: CloudinaryService,
+    private cloudinary: CloudinaryService
   ) {}
 
   //process uploaded file and generate pages contents
   async processFile(file: Express.Multer.File) {
     let pageInfos: PageInfo[] = [];
 
-    if (file.mimetype === 'application/pdf') {
+    if (file.mimetype === "application/pdf") {
       pageInfos = await this.processPdf(file.path);
     } else if (
       file.mimetype ===
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     ) {
       pageInfos = await this.processDocx(file.path);
     }
@@ -48,12 +48,12 @@ export class PrintJobService {
     const bwPages = totalPages - colorPages;
     const totalImages = pageInfos.reduce(
       (sum, page) => sum + page.images.length,
-      0,
+      0
     );
     const totalPixels = pageInfos.reduce(
       (sum, page) =>
         sum + page.images.reduce((pageSum, img) => pageSum + img.pixelCount, 0),
-      0,
+      0
     );
 
     //save generated details into db
@@ -101,7 +101,7 @@ export class PrintJobService {
     const pageInfos: PageInfo[] = [];
 
     // Simplified page detection (assuming each <p> tag is a new page)
-    const pages = content.split('<p>');
+    const pages = content.split("<p>");
 
     for (const page of pages) {
       const isColored = await this.isPageColored(page);
@@ -114,16 +114,16 @@ export class PrintJobService {
 
   //a method to check if a page contains these type of color formatting
   private async isPageColored(content: string): Promise<boolean> {
-    const colorKeywords = ['color', 'rgb', 'rgba', '#'];
+    const colorKeywords = ["color", "rgb", "rgba", "#"];
     return colorKeywords.some((keyword) =>
-      content.toLowerCase().includes(keyword),
+      content.toLowerCase().includes(keyword)
     );
   }
 
   //mockup extract images from document
   private async extractImagesFromPdf(
     filePath: string,
-    pageNumber: number,
+    pageNumber: number
   ): Promise<ImageInfo[]> {
     return [
       {
@@ -139,7 +139,7 @@ export class PrintJobService {
   //method still under implementation
   private async ExtractImagesFromPDF(
     pdfPath: string,
-    count: number,
+    count: number
     // pageData: any,
   ) {
     const dataBuffer = await fs.readFile(pdfPath);
@@ -167,7 +167,7 @@ export class PrintJobService {
     const isColored = stats.channels.some(
       (channel) =>
         channel.min !== channel.max ||
-        (channel.min !== 0 && channel.min !== 255),
+        (channel.min !== 0 && channel.min !== 255)
     );
 
     return {
@@ -242,7 +242,7 @@ export class PrintJobService {
 
     const query = await this.prismaService.printJob.update({
       data: {
-        status: paymentSuccessful ? 'success' : 'failed',
+        status: paymentSuccessful ? "success" : "failed",
         customerEmail: paymentData.email,
       },
       where: {
@@ -253,13 +253,13 @@ export class PrintJobService {
     if (query) {
       if (paymentSuccessful) {
         this.sendConfirmationEmail(paymentData.email);
-        return { status: true, message: 'Payment processed successfully' };
+        return { status: true, message: "Payment processed successfully" };
       } else {
-        return { status: false, message: 'Payment processing failed' };
+        return { status: false, message: "Payment processing failed" };
       }
     }
 
-    return { status: false, message: 'error processing payment' };
+    return { status: false, message: "error processing payment" };
   }
 
   //mockup payment confirmation
@@ -286,8 +286,8 @@ export class PrintJobService {
         });
 
     return query
-      ? { status: true, message: 'Prices updated successfully' }
-      : { status: false, message: 'unable to update price' };
+      ? { status: true, message: "Prices updated successfully" }
+      : { status: false, message: "unable to update price" };
   }
 
   //fetch printing price
@@ -296,7 +296,7 @@ export class PrintJobService {
 
     return {
       status: true,
-      message: 'pricing fetched',
+      message: "pricing fetched",
       details: {
         bwPageCost: query?.bwPageCost || 20,
         colorPageCost: query?.colorPageCost || 25,
@@ -311,7 +311,7 @@ export class PrintJobService {
 
     return {
       status: true,
-      message: 'jobs fetched',
+      message: "jobs fetched",
       data: query,
     };
   }
