@@ -1,4 +1,4 @@
-import { Box, Grid2, Button, TextField } from "@mui/material";
+import { Box, Grid2, Button, TextField, CircularProgress } from "@mui/material";
 import {
   AddOutlined,
   DescriptionOutlined,
@@ -95,106 +95,117 @@ export default function AdminPage() {
           </h6>
           <br />
 
-          <form
-            onSubmit={formik.handleSubmit}
-            autoComplete="off"
-            style={{ maxWidth: 500 }}
-          >
-            {formInput.map((item, index) => (
-              <Box key={index}>
-                <TextField
-                  label={
-                    <span style={{ color: "#45474A", fontWeight: "600" }}>
-                      {item.title}
-                    </span>
-                  }
-                  value={formik.values[item.key]}
-                  onChange={({ target: { value } }) =>
-                    formik.setFieldValue(item.key, value)
-                  }
-                  placeholder={item.placeholder}
-                  error={
-                    formik.touched[item.key] && Boolean(formik.errors[item.key])
-                  }
-                  helperText={
-                    formik.touched[item.key] && formik.errors[item.key]
-                  }
-                  margin="normal"
-                  id={item.key}
-                  type={item.type}
-                  name={item.key}
-                  sx={{ mb: 2, mt: 0.3 }}
-                  variant="outlined"
-                  fullWidth
-                ></TextField>
+          <Box>
+            {jobs === "" && pricing === "" ? (
+              <Box sx={{ textAlign: "center", mt: "15%" }}>
+                <CircularProgress color="primary" size={50} />
               </Box>
-            ))}
+            ) : (
+              <Box>
+                <form
+                  onSubmit={formik.handleSubmit}
+                  autoComplete="off"
+                  style={{ maxWidth: 500 }}
+                >
+                  {formInput.map((item, index) => (
+                    <Box key={index}>
+                      <TextField
+                        label={
+                          <span style={{ color: "#45474A", fontWeight: "600" }}>
+                            {item.title}
+                          </span>
+                        }
+                        value={formik.values[item.key]}
+                        onChange={({ target: { value } }) =>
+                          formik.setFieldValue(item.key, value)
+                        }
+                        placeholder={item.placeholder}
+                        error={
+                          formik.touched[item.key] &&
+                          Boolean(formik.errors[item.key])
+                        }
+                        helperText={
+                          formik.touched[item.key] && formik.errors[item.key]
+                        }
+                        margin="normal"
+                        id={item.key}
+                        type={item.type}
+                        name={item.key}
+                        sx={{ mb: 2, mt: 0.3 }}
+                        variant="outlined"
+                        fullWidth
+                      ></TextField>
+                    </Box>
+                  ))}
 
-            <br />
+                  <br />
 
-            <LoadingButton
-              variant="contained"
-              type="submit"
-              disableElevation
-              loading={loading}
-              fullWidth
-              sx={{
-                backgroundColor: "primary",
+                  <LoadingButton
+                    variant="contained"
+                    type="submit"
+                    disableElevation
+                    loading={loading}
+                    fullWidth
+                    sx={{
+                      backgroundColor: "primary",
 
-                textTransform: "capitalize",
-                fontWeight: "600",
-                color: "white",
-                height: 50,
-                borderRadius: 1,
-              }}
-            >
-              Change Price
-            </LoadingButton>
-          </form>
+                      textTransform: "capitalize",
+                      fontWeight: "600",
+                      color: "white",
+                      height: 50,
+                      borderRadius: 1,
+                    }}
+                  >
+                    Change Price
+                  </LoadingButton>
+                </form>
 
-          <br />
+                <br />
 
-          <br />
+                <br />
 
-          <h6>
-            <b>Print Jobs</b>
-          </h6>
-          <table className="w3-table-all">
-            <thead>
-              <tr>
-                <th>Job ID</th>
-                <th>File Uploaded</th>
-                <th>Total Pages</th>
-                <th>B&W Pages</th>
-                <th>Color Pages</th>
-                <th>Total Pixels</th>
-                <th>Amount Paid</th>
-              </tr>
-            </thead>
-            <tbody>
-              {printJobs.map((job, index) => (
-                <tr key={index}>
-                  <td>{job.id}</td>
-                  <td>
-                    <a
-                      href={job.fileName}
-                      target="_blank"
-                      style={{ color: "blue" }}
-                    >
-                      {job.fileName}
-                    </a>
-                  </td>
-                  <td>{formatAmount(job.totalPages)}</td>
-                  <td>{formatAmount(job.bwPages)}</td>
-                  <td>{formatAmount(job.colorPages)}</td>
-                  <td>{formatAmount(job.totalPixels)}</td>
-                  <td>
-                    <b>NGN {formatAmount(job.quotedPrice)}</b>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                <h6>
+                  <b>Print Jobs</b>
+                </h6>
+                <table className="w3-table-all">
+                  <thead>
+                    <tr>
+                      <th>Job ID</th>
+                      <th>File Uploaded</th>
+                      <th>Total Pages</th>
+                      <th>B&W Pages</th>
+                      <th>Color Pages</th>
+                      <th>Total Pixels</th>
+                      <th>Amount Paid</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {printJobs.map((job, index) => (
+                      <tr key={index}>
+                        <td>{job.id}</td>
+                        <td>
+                          <a
+                            href={job.fileName}
+                            target="_blank"
+                            style={{ color: "blue" }}
+                          >
+                            {job.fileName}
+                          </a>
+                        </td>
+                        <td>{formatAmount(job.totalPages)}</td>
+                        <td>{formatAmount(job.bwPages)}</td>
+                        <td>{formatAmount(job.colorPages)}</td>
+                        <td>{formatAmount(job.totalPixels)}</td>
+                        <td>
+                          <b>NGN {formatAmount(job.quotedPrice)}</b>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Box>
+            )}
+          </Box>
         </Grid2>
       </Grid2>
     </Box>
