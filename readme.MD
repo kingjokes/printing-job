@@ -70,7 +70,9 @@ Different endpoints are created from the backend for the functional operation of
 
 During the development of this system. Extracting images pixels from uploaded document seems ambiguous and not easily achievable due to time constraint. The best approach at the moment was to give out a mock up value for the image properties such as height, width and pixel count.
 
-Print Job Management System Architecture
+### Print Job Management System Architecture
+
+---
 
 ```mermaid
 graph TD
